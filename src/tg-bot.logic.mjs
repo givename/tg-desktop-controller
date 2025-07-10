@@ -1,6 +1,7 @@
-import { bot, sendMessageWithKeyboard, setKeyboard } from './tg-bot.instance.mjs';
+import { bot, sendMessageWithKeyboard } from './tg-bot.instance.mjs';
+import { setKeyboard } from './keyboard.manager.mjs';
 import { isAuthorized } from './env.config.mjs';
-import { isMessageTooOld } from './utils.mjs';
+import { isMessageTooOld, sleep } from './utils.mjs';
 import * as osController from './os.controller.mjs';
 import {
   HELP_TEXT,
@@ -208,13 +209,13 @@ export function setupBotLogic(bot) {
       if (isMessageTooOld(msg)) return;
 
       if (!isAuthorized(userId)) {
-        await sendMessageWithKeyboard(chatId, ERRORS.NO_ACCESS);
+        await sendMessageWithKeyboard(chatId, ERRORS.NO_ACCESS, { forceKeyboard: true });
         return;
       }
 
-      // Всегда устанавливаем клавиатуру при старте
-      setKeyboard(chatId);
-      await sendMessageWithKeyboard(chatId, WELCOME_MESSAGE);
+      // Принудительно устанавливаем клавиатуру при старте
+      setKeyboard(chatId, true);
+      await sendMessageWithKeyboard(chatId, WELCOME_MESSAGE, { forceKeyboard: true });
     } catch (error) {
       console.error(ERROR_LOG_MESSAGES.COMMAND_START, error);
     }
@@ -230,12 +231,35 @@ export function setupBotLogic(bot) {
       if (isMessageTooOld(msg)) return;
 
       if (!isAuthorized(userId)) {
-        await sendMessageWithKeyboard(chatId, ERRORS.NO_ACCESS);
+        await sendMessageWithKeyboard(chatId, ERRORS.NO_ACCESS, { forceKeyboard: true });
         return;
       }
 
       const helpMessage = `${HELP_MESSAGE_TITLE}\n\n${HELP_TEXT}`;
-      await sendMessageWithKeyboard(chatId, helpMessage);
+      // Также принудительно устанавливаем клавиатуру при /help
+      await sendMessageWithKeyboard(chatId, helpMessage, { forceKeyboard: true });
+    } catch (error) {
+      console.error(ERROR_LOG_MESSAGES.COMMAND_HELP, error);
+    }
+  });
+
+  // Команда /keyboard - для принудительного восстановления клавиатуры
+  bot.onText(/\/keyboard/, async (msg) => {
+    try {
+      const chatId = msg.chat.id;
+      const userId = msg.from.id;
+
+      // Игнорируем устаревшие сообщения
+      if (isMessageTooOld(msg)) return;
+
+      if (!isAuthorized(userId)) {
+        await sendMessageWithKeyboard(chatId, ERRORS.NO_ACCESS, { forceKeyboard: true });
+        return;
+      }
+
+      // Принудительно восстанавливаем клавиатуру
+      setKeyboard(chatId, true);
+      await sendMessageWithKeyboard(chatId, '⌨️ Клавиатура восстановлена!', { forceKeyboard: true });
     } catch (error) {
       console.error(ERROR_LOG_MESSAGES.COMMAND_HELP, error);
     }
@@ -657,4 +681,101 @@ export function setupBotLogic(bot) {
       console.error(ERROR_LOG_MESSAGES.MESSAGE_PROCESSING, error);
     }
   });
+}
+
+// Функции инициализации и управления ботом
+// Простая функция перезапуска polling
+async function restartPolling() {
+  console.log('🔄 Перезапуск polling...');
+
+  try {
+    await bot.stopPolling();
+    await sleep(2000);
+    await bot.startPolling();
+    console.log('✅ Polling перезапущен успешно');
+  } catch (error) {
+    console.error('❌ Ошибка перезапуска polling:', error.message);
+    // Если не удается перезапустить, завершаем процесс для PM2
+    setTimeout(() => process.exit(1), 5000);
+  }
+}
+
+// Функция инициализации всех хуков и обработчиков бота
+export function initializeBotHooks() {
+  // Обработка ошибок polling - главная причина зависания после сна
+  bot.on('polling_error', (error) => {
+    console.error('🔴 Ошибка polling:', error.message);
+
+    // Список сетевых ошибок, которые требуют перезапуска
+    const networkErrors = ['EFATAL', 'ENOTFOUND', 'ECONNRESET', 'ETIMEDOUT', 'ECONNREFUSED'];
+
+    if (networkErrors.includes(error.code)) {
+      console.log('🌐 Сетевая ошибка, перезапуск polling...');
+      setTimeout(() => restartPolling(), 1000);
+    }
+  });
+
+  // Обработка общих ошибок бота
+  bot.on('error', (error) => {
+    console.error('🔴 Ошибка бота:', error.message);
+  });
+
+  // Простой heartbeat - проверяем соединение каждые 60 секунд
+  setInterval(async () => {
+    try {
+      await bot.getMe();
+      console.log('💚 Heartbeat: соединение активно');
+    } catch (error) {
+      console.warn('⚠️ Heartbeat: проблема с соединением, перезапуск...');
+      restartPolling();
+    }
+  }, 60000);
+
+  // Graceful shutdown
+  process.on('SIGINT', async () => {
+    console.log('📡 Получен SIGINT, остановка бота...');
+    try {
+      await bot.stopPolling();
+      console.log('✅ Бот остановлен');
+    } catch (error) {
+      console.error('❌ Ошибка при остановке:', error.message);
+    }
+    process.exit(0);
+  });
+
+  process.on('SIGTERM', async () => {
+    console.log('📡 Получен SIGTERM, остановка бота...');
+    try {
+      await bot.stopPolling();
+      console.log('✅ Бот остановлен');
+    } catch (error) {
+      console.error('❌ Ошибка при остановке:', error.message);
+    }
+    process.exit(0);
+  });
+
+  // Обработка критических ошибок
+  process.on('unhandledRejection', (reason) => {
+    console.error('💥 Необработанная ошибка:', reason);
+
+    // Если это сетевая ошибка, перезапускаем polling
+    if (reason && reason.code && ['ENOTFOUND', 'ECONNRESET', 'ETIMEDOUT'].includes(reason.code)) {
+      console.log('🌐 Сетевая ошибка, перезапуск...');
+      setTimeout(() => restartPolling(), 2000);
+    }
+  });
+
+  process.on('uncaughtException', (error) => {
+    console.error('💀 Критическая ошибка:', error.message);
+
+    // При критических ошибках завершаем процесс для PM2
+    setTimeout(() => {
+      console.log('🚨 Перезапуск процесса...');
+      process.exit(1);
+    }, 1000);
+  });
+
+  console.log('🚀 Telegram бот запущен');
+  console.log('💚 Автовосстановление после сна: включено');
+  console.log('🔄 Heartbeat проверка: каждые 60 секунд');
 }

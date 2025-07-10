@@ -19,7 +19,10 @@ export const HELP_TEXT = `*Аудио управление:*
 *Файлы:*
 📎 Отправьте боту файл или фото, и он сохранит его в указанную директорию
 
-*Команды:* /soundon, /soundoff, /microphoneon, /microphoneoff, /play, /pause, /next, /prev, /volume_up, /volume_down, /displayoff, /reboot, /suspend, /ping, /info, /uptime, /screenshot
+*Утилиты:*
+⌨️ /keyboard - восстановить клавиатуру (если она исчезла)
+
+*Команды:* /start, /help, /keyboard, /soundon, /soundoff, /microphoneon, /microphoneoff, /play, /pause, /next, /prev, /volume_up, /volume_down, /displayoff, /reboot, /suspend, /ping, /info, /uptime, /screenshot
 `;
 
 // Сообщения об ошибках
@@ -271,7 +274,7 @@ export const SYSTEM_COMMANDS = {
 export const CONSOLE_MESSAGES = {
   BOT_STARTED: '🚀 Telegram Desktop Controller Bot запущен!',
   AVAILABLE_COMMANDS:
-    '📋 Доступные команды: /start, /help, /soundon, /soundoff, /pause, /play, /next, /prev, /volume_up, /volume_down, /suspend, /ping, /info',
+    '📋 Доступные команды: /start, /help, /keyboard, /soundon, /soundoff, /pause, /play, /next, /prev, /volume_up, /volume_down, /suspend, /ping, /info',
   KEYBOARD_HELP:
     '🎹 Клавиатура: 🔊 Звук вкл/выкл, ▶️⏸️ Play/Pause, ⏮️⏭️ Prev/Next, 🔉🔊 Тише/Громче, 😴 Сон, 🏓 Ping, ℹ️ Инфо, ❓ Помощь',
   COMMAND_SUCCESS: (description, command) => `✅ ${description}: ${command}`,
