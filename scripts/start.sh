@@ -26,7 +26,7 @@ print_error() {
 
 # Проверяем, запущен ли скрипт из правильной директории
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="/mnt/data/reps/tg-desktop-controller"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 print_status "Переходим в директорию проекта: $PROJECT_DIR"
 cd "$PROJECT_DIR" || {

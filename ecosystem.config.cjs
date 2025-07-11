@@ -2,7 +2,6 @@ module.exports = {
   apps: [{
     name: 'tg-desktop-controller',
     script: 'src/index.mjs',
-    cwd: '/mnt/data/reps/tg-desktop-controller',
     interpreter: 'node',
     instances: 1,
     autorestart: true,

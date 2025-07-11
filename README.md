@@ -99,7 +99,7 @@ tg-desktop-controller/
 ### 1. Клонирование и установка зависимостей
 
 ```bash
-cd /mnt/data/reps/tg-desktop-controller
+cd your-project-directory
 npm install
 ```
 
@@ -348,7 +348,7 @@ pm2 logs | grep "❌\|💀"
 ## 🔄 Обновление
 
 ```bash
-cd /mnt/data/reps/tg-desktop-controller
+cd your-project-directory
 git pull  # если используется git
 npm update
 pm2 restart tg-desktop-controller
