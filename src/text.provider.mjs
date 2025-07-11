@@ -107,6 +107,7 @@ export const STATUS = {
   PAUSED: 'На паузе',
   STOPPED: 'Остановлено',
   NOTHING_PLAYING: 'Ничего не воспроизводится',
+  TRACK_UNDETERMINED: 'Неопределяемый',
 };
 
 // Приветственное сообщение

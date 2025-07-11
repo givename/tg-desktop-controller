@@ -29,7 +29,7 @@ export async function sendMessageWithKeyboard(chatId, text, options = {}) {
   const mergedOptions = { ...defaultOptions, ...options };
   // Удаляем наш кастомный параметр перед отправкой
   delete mergedOptions.forceKeyboard;
-  
+
   if (keyboard) {
     mergedOptions.reply_markup = keyboard;
   }
@@ -59,7 +59,7 @@ export async function sendPhotoWithKeyboard(chatId, photo, options = {}) {
   const keyboard = getKeyboard(chatId, options.forceKeyboard);
   const mergedOptions = { ...options };
   delete mergedOptions.forceKeyboard;
-  
+
   if (keyboard) {
     mergedOptions.reply_markup = keyboard;
   }
@@ -72,7 +72,7 @@ export async function sendDocumentWithKeyboard(chatId, document, options = {}) {
   const keyboard = getKeyboard(chatId, options.forceKeyboard);
   const mergedOptions = { ...options };
   delete mergedOptions.forceKeyboard;
-  
+
   if (keyboard) {
     mergedOptions.reply_markup = keyboard;
   }

@@ -165,7 +165,7 @@ export async function getAudioInfo() {
   });
 }
 
-// Функция для получения сетевой скорости за последние 5 минут
+// Функция для получения использования сети за последние 5 секунд
 export async function getNetworkSpeed() {
   try {
     // Получаем список сетевых интерфейсов
@@ -184,16 +184,16 @@ export async function getNetworkSpeed() {
     // Получаем текущую статистику
     const stats1 = await si.networkStats(activeInterface.iface);
 
-    // Ждем 2 секунды для замера скорости
-    await sleep(2000);
+    // Ждем 5 секунд для замера скорости использования
+    await sleep(5000);
 
-    // Получаем статистику через 2 секунды
+    // Получаем статистику через 5 секунд
     const stats2 = await si.networkStats(activeInterface.iface);
 
     if (stats1.length > 0 && stats2.length > 0) {
-      const timeDiff = 2; // 2 секунды
-      const rxSpeed = (stats2[0].rx_bytes - stats1[0].rx_bytes) / timeDiff; // байт/сек
-      const txSpeed = (stats2[0].tx_bytes - stats1[0].tx_bytes) / timeDiff; // байт/сек
+      const timeDiff = 5; // 5 секунд
+      const rxSpeed = (stats2[0].rx_bytes - stats1[0].rx_bytes) / timeDiff; // байт/сек использования
+      const txSpeed = (stats2[0].tx_bytes - stats1[0].tx_bytes) / timeDiff; // байт/сек использования
 
       return NETWORK_SPEED_TEMPLATE(formatNetworkSpeed(txSpeed), formatNetworkSpeed(rxSpeed));
     }

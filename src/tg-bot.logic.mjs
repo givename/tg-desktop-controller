@@ -2,6 +2,7 @@ import { bot, sendMessageWithKeyboard } from './tg-bot.instance.mjs';
 import { setKeyboard } from './keyboard.manager.mjs';
 import { isAuthorized } from './env.config.mjs';
 import { isMessageTooOld, sleep } from './utils.mjs';
+import { createReadStream } from 'fs';
 import * as osController from './os.controller.mjs';
 import {
   HELP_TEXT,
@@ -181,10 +182,17 @@ async function handleScreenshotButton(chatId) {
 
       // Отправляем каждый скриншот отдельно
       for (const screenshot of result.screenshots) {
-        await bot.sendPhoto(chatId, screenshot.filepath, {
-          caption: screenshot.caption,
-        });
-        filepaths.push(screenshot.filepath);
+        try {
+          const filepath = screenshot.filepath.trim();
+          const stream = createReadStream(filepath);
+          await bot.sendPhoto(chatId, stream, {
+            caption: screenshot.caption,
+          });
+          filepaths.push(filepath);
+        } catch (err) {
+          console.error('Error sending screenshot:', err);
+          await sendMessageWithKeyboard(chatId, `${ERRORS.SCREENSHOT_SEND_ERROR}: ${err.message}`);
+        }
       }
 
       // Удаляем временные файлы через osController
@@ -259,7 +267,9 @@ export function setupBotLogic(bot) {
 
       // Принудительно восстанавливаем клавиатуру
       setKeyboard(chatId, true);
-      await sendMessageWithKeyboard(chatId, '⌨️ Клавиатура восстановлена!', { forceKeyboard: true });
+      await sendMessageWithKeyboard(chatId, '⌨️ Клавиатура восстановлена!', {
+        forceKeyboard: true,
+      });
     } catch (error) {
       console.error(ERROR_LOG_MESSAGES.COMMAND_HELP, error);
     }

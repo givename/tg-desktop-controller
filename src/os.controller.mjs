@@ -148,26 +148,12 @@ export async function volumeDown() {
 // Микрофон
 export async function microphoneOn() {
   const result = await platformController.microphoneOn();
-  if (result.success) {
-    return {
-      success: true,
-      message: `${SUCCESS_MESSAGES.MICROPHONE_ON}\n\n${result.statusMessage}`,
-    };
-  } else {
-    return { success: false, message: ERROR_TEMPLATES.MICROPHONE_ON_ERROR(result.error) };
-  }
+  return result;
 }
 
 export async function microphoneOff() {
   const result = await platformController.microphoneOff();
-  if (result.success) {
-    return {
-      success: true,
-      message: `${SUCCESS_MESSAGES.MICROPHONE_OFF}\n\n${result.statusMessage}`,
-    };
-  } else {
-    return { success: false, message: ERROR_TEMPLATES.MICROPHONE_OFF_ERROR(result.error) };
-  }
+  return result;
 }
 
 // Система

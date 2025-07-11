@@ -36,4 +36,4 @@ export function setKeyboard(chatId, force = false) {
 export function resetKeyboard(chatId) {
   currentKeyboards.delete(chatId);
   forceKeyboardSend.delete(chatId);
-} 
+}
