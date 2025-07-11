@@ -339,9 +339,9 @@ export async function microphoneOn() {
   );
   if (result.success) {
     const micStatus = await getMicrophoneStatus();
-    return { success: true, statusMessage: `🎤 Статус микрофона: ${micStatus}` };
+    return { success: true, message: `🎤 Микрофон включен (${micStatus})` };
   } else {
-    return result;
+    return { success: false, message: `❌ Ошибка включения микрофона: ${result.error}` };
   }
 }
 
@@ -352,9 +352,9 @@ export async function microphoneOff() {
   );
   if (result.success) {
     const micStatus = await getMicrophoneStatus();
-    return { success: true, statusMessage: `🎤 Статус микрофона: ${micStatus}` };
+    return { success: true, message: `🎤 Микрофон выключен (${micStatus})` };
   } else {
-    return result;
+    return { success: false, message: `❌ Ошибка выключения микрофона: ${result.error}` };
   }
 }
 
