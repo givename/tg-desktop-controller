@@ -37,12 +37,12 @@ export async function executeCommand(command, description) {
 export async function executeAudioCommand(command, description) {
   try {
     // Проверяем наличие переменных окружения
-    if (!env.USER_ID || !env.USER_NAME) {
+    if (!env.LINUX_USER_ID || !env.LINUX_USER_NAME) {
       throw new Error(ERRORS.MISSING_USER_ENV);
     }
 
-    const userId = env.USER_ID;
-    const username = env.USER_NAME;
+    const userId = env.LINUX_USER_ID;
+    const username = env.LINUX_USER_NAME;
     const audioEnv = `PULSE_SERVER=unix:/run/user/${userId}/pulse/native XDG_RUNTIME_DIR=/run/user/${userId}`;
 
     const fullCommand = `sudo -u ${username} ${audioEnv} ${command}`;
@@ -473,9 +473,9 @@ export async function ensureStorageDirectory() {
 
 // Функция для установки правильного владельца файла
 export async function setFileOwnership(filePath) {
-  if (env.USER_NAME && env.USER_ID) {
+  if (env.LINUX_USER_NAME && env.LINUX_USER_ID) {
     try {
-      await execAsync(`chown ${env.USER_NAME}:${env.USER_NAME} "${filePath}"`);
+      await execAsync(`chown ${env.LINUX_USER_NAME}:${env.LINUX_USER_NAME} "${filePath}"`);
       await execAsync(`chmod 644 "${filePath}"`);
     } catch (chownError) {
       console.warn(CONSOLE_MESSAGES.CHOWN_WARNING(chownError.message));

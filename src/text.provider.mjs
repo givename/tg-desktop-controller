@@ -28,7 +28,7 @@ export const HELP_TEXT = `*Аудио управление:*
 // Сообщения об ошибках
 export const ERRORS = {
   NO_ACCESS: '❌ У вас нет доступа к этому боту',
-  MISSING_USER_ENV: 'Не заданы переменные окружения USER_ID и USER_NAME',
+  MISSING_USER_ENV: 'Не заданы переменные окружения LINUX_USER_ID и LINUX_USER_NAME',
   STORAGE_PATH_NOT_SET: 'Путь для сохранения файлов не указан. Добавьте STORAGE_PATH в файл .env',
   STORAGE_DIRECTORY_ERROR: 'Ошибка создания директории',
   SCROT_NOT_INSTALLED:
@@ -42,6 +42,7 @@ export const ERRORS = {
   PHOTO_PROCESSING_ERROR: 'Произошла ошибка при обработке фото',
   FILE_PROCESSING_ERROR: 'Произошла ошибка при обработке файла',
   SCREENSHOT_SEND_ERROR: 'Ошибка отправки скриншотов',
+  SCREENSHOTS_ERROR: 'Ошибка создания скриншотов',
   INVALID_CONFIRMATION_CODE: 'Неверный код подтверждения',
 };
 
@@ -260,6 +261,7 @@ export const COMMAND_DESCRIPTIONS = {
   SUSPEND_SYSTEM: 'Перевод в режим сна',
   REBOOT_SYSTEM: 'Перезагрузка системы',
   DELETE_FILE: (filepath) => `Удаление файла ${filepath}`,
+  TAKE_SCREENSHOTS: 'Создание скриншотов',
 };
 
 // Системные команды и их параметры
@@ -292,6 +294,7 @@ export const CONSOLE_MESSAGES = {
   NETWORK_SPEED_ERROR_LOG: (error) => `Ошибка получения сетевой скорости: ${error}`,
   SYSTEM_INFO_ERROR_LOG: (error) => `Ошибка получения системной информации: ${error}`,
   FILE_SAVE_ERROR_LOG: (error) => `Ошибка сохранения файла: ${error}`,
+  SCREENSHOTS_ERROR_LOG: (error) => `Ошибка создания скриншотов: ${error}`,
 };
 
 export const HELP_MESSAGE_TITLE = '🖥️ *Desktop Controller Bot - Справка*';

@@ -9,8 +9,8 @@ dotenv.config();
 const REQUIRED_VARS = [
   'TELEGRAM_BOT_TOKEN',
   'AUTHORIZED_USER_ID',
-  'USER_ID',
-  'USER_NAME',
+  'LINUX_USER_ID',
+  'LINUX_USER_NAME',
   'STORAGE_PATH',
 ];
 
@@ -39,8 +39,8 @@ export function validateEnv() {
 export const env = {
   TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
   AUTHORIZED_USER_ID: process.env.AUTHORIZED_USER_ID,
-  USER_ID: process.env.USER_ID,
-  USER_NAME: process.env.USER_NAME,
+  LINUX_USER_ID: process.env.LINUX_USER_ID,
+  LINUX_USER_NAME: process.env.LINUX_USER_NAME,
   STORAGE_PATH: process.env.STORAGE_PATH,
 };
 

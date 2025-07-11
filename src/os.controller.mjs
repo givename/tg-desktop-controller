@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 
 import * as linuxController from './os.linux.controller.mjs';
+import * as windowsController from './os.windows.controller.mjs';
 import { createSafeFileName, escapeMarkdown, formatFileSize, sleep } from './utils.mjs';
 import {
   SUCCESS_MESSAGES,
@@ -17,6 +18,8 @@ const platformController = (() => {
   switch (platform) {
     case 'linux':
       return linuxController;
+    case 'win32':
+      return windowsController;
     default:
       throw new Error(SYSTEM_ERROR_MESSAGES.UNSUPPORTED_PLATFORM(platform));
   }
